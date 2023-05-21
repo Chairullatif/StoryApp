@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">Story App</string>
+    <string name="created_by_chairullatif">Created by Chairullatif</string>
+    <string name="login">Login</string>
+    <string name="input_your_email">Input your email</string>
+    <string name="password_minimal_8_karakter">Password must be at least 8 characters</string>
+    <string name="input_your_password">Input your password</string>
+    <string name="email_is_not_valid">Email is not valid</string>
 </resources>
