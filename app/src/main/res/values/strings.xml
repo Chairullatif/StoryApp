@@ -12,4 +12,6 @@
     <string name="name">Name</string>
     <string name="input_your_name">Input your name</string>
     <string name="username_is_required">Username is required</string>
+    <string name="story">Story</string>
+    <string name="logout">Logout</string>
 </resources>

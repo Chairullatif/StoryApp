@@ -8,6 +8,7 @@ import android.text.TextWatcher
 import android.util.Patterns
 import com.chairullatif.storyapp.R
 import com.chairullatif.storyapp.databinding.ActivityLoginBinding
+import com.chairullatif.storyapp.ui.liststory.ListStoryActivity
 import com.chairullatif.storyapp.ui.login.register.RegisterActivity
 
 class LoginActivity : AppCompatActivity() {
@@ -55,6 +56,11 @@ class LoginActivity : AppCompatActivity() {
                 startActivity(intent)
             }
 
+            //
+            textView.setOnClickListener {
+                val intent = Intent(this@LoginActivity, ListStoryActivity::class.java)
+                startActivity(intent)
+            }
         }
     }
 
