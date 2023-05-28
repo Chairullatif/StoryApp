@@ -9,4 +9,16 @@
     <color name="colorNeutral200">#CACACA</color>
     <color name="colorNeutral100">#E9E9E9</color>
     <color name="colorNeutral0">#FFFFFF</color>
+
+    <color name="colorPrimary500">#005ac2</color>
+    <color name="colorPrimary400">#1a7ff3</color>
+    <color name="colorPrimary300">#338df5</color>
+    <color name="colorPrimary200">#4d9cf6</color>
+    <color name="colorPrimary100">#66aaf7</color>
+
+
+    <color name="colorSuccess">#53D258</color>
+    <color name="colorError">#E25C5C</color>
+    <color name="colorWarning">#E4C65B</color>
+    <color name="colorInformation">#2685CA</color>
 </resources>

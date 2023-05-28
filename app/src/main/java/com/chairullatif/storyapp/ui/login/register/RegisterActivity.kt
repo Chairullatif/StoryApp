@@ -1,22 +1,20 @@
-package com.chairullatif.storyapp.ui.login
+package com.chairullatif.storyapp.ui.login.register
 
-import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Patterns
 import com.chairullatif.storyapp.R
-import com.chairullatif.storyapp.databinding.ActivityLoginBinding
-import com.chairullatif.storyapp.ui.login.register.RegisterActivity
+import com.chairullatif.storyapp.databinding.ActivityRegisterBinding
 
-class LoginActivity : AppCompatActivity() {
+class RegisterActivity : AppCompatActivity() {
 
-    private lateinit var binding: ActivityLoginBinding
+    private lateinit var binding: ActivityRegisterBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityLoginBinding.inflate(layoutInflater)
+        binding = ActivityRegisterBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
         binding.apply {
@@ -49,10 +47,18 @@ class LoginActivity : AppCompatActivity() {
 
             })
 
-            //tvRegister
-            tvRegister.setOnClickListener {
-                val intent = Intent(this@LoginActivity, RegisterActivity::class.java)
-                startActivity(intent)
+            //btn back
+            btnBack.setOnClickListener {
+                onBackPressed()
+            }
+
+            //btn register
+            btnRegister.setOnClickListener {
+                if ((edtUserName.text?.length ?: 0) < 1) {
+                    edtUserName.error = getString(R.string.username_is_required)
+                } else {
+                    edtUserName.error = null
+                }
             }
 
         }
@@ -60,10 +66,11 @@ class LoginActivity : AppCompatActivity() {
 
     private fun setButtonEnable() {
         binding.apply {
-            btnLogin.isEnabled =
-                (Patterns.EMAIL_ADDRESS.matcher(edtEmail.text.toString()).matches()
-                        && (edtPassword.text?.length ?: 0) >= 8)
+            btnRegister.isEnabled =
+                ((Patterns.EMAIL_ADDRESS.matcher(edtEmail.text.toString()).matches()
+                        && (edtPassword.text?.length ?: 0) >= 8
+                        && (edtUserName.text?.length ?: 0) >= 0
+                        ))
         }
     }
-
 }
