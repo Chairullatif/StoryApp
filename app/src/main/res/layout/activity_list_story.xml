@@ -14,7 +14,7 @@
         android:fontFamily="@font/montserrat_bold"
         android:text="@string/story"
         android:textColor="@color/colorNeutral400"
-        android:textSize="20dp"
+        android:textSize="20sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -28,7 +28,8 @@
         app:layout_constraintBottom_toBottomOf="@+id/tv_title"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@+id/tv_title"
-        app:tint="@color/colorNeutral400" />
+        app:tint="@color/colorNeutral400"
+        android:contentDescription="@string/image_menu" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_list_story"

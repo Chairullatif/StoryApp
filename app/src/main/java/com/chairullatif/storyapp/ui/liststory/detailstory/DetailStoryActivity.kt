@@ -1,17 +1,17 @@
-package com.chairullatif.storyapp.ui.liststory.addstory
+package com.chairullatif.storyapp.ui.liststory.detailstory
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import com.chairullatif.storyapp.R
-import com.chairullatif.storyapp.databinding.ActivityAddStoryBinding
+import com.chairullatif.storyapp.databinding.ActivityDetailStoryBinding
 
-class AddStoryActivity : AppCompatActivity() {
+class DetailStoryActivity : AppCompatActivity() {
 
-    private lateinit var binding: ActivityAddStoryBinding
+    private lateinit var binding: ActivityDetailStoryBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityAddStoryBinding.inflate(layoutInflater)
+        binding = ActivityDetailStoryBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
         binding.apply {

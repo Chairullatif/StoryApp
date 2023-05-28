@@ -14,4 +14,15 @@
     <string name="username_is_required">Username is required</string>
     <string name="story">Story</string>
     <string name="logout">Logout</string>
+    <string name="add_story">Add Story</string>
+    <string name="camera">Camera</string>
+    <string name="upload">Upload</string>
+    <string name="write_your_story_here">Write your story here</string>
+    <string name="gallery">Gallery</string>
+    <string name="image_back">Image back</string>
+    <string name="image_preview">Image preview</string>
+    <string name="image_menu">Image menu</string>
+    <string name="image_ilustration">Image ilustration</string>
+    <string name="image_story">Image story</string>
+    <string name="detail_story">Detail Story</string>
 </resources>

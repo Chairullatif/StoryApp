@@ -1,11 +1,14 @@
 package com.chairullatif.storyapp.ui.liststory
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import com.chairullatif.storyapp.R
 import com.chairullatif.storyapp.databinding.ActivityListStoryBinding
+import com.chairullatif.storyapp.ui.liststory.addstory.AddStoryActivity
+import com.chairullatif.storyapp.ui.liststory.detailstory.DetailStoryActivity
 
 class ListStoryActivity : AppCompatActivity() {
 
@@ -21,6 +24,12 @@ class ListStoryActivity : AppCompatActivity() {
             btnMenu.setOnClickListener {
                 showPopUpMenu()
             }
+
+            //btn add story
+            fabAddStory.setOnClickListener {
+                val intent = Intent(this@ListStoryActivity, AddStoryActivity::class.java)
+                startActivity(intent)
+            }
         }
     }
 
@@ -30,6 +39,8 @@ class ListStoryActivity : AppCompatActivity() {
         popupMenu.setOnMenuItemClickListener { item ->
             when (item.itemId) {
                 R.id.menu_logout -> {
+                    val intent = Intent(this, DetailStoryActivity::class.java)
+                    startActivity(intent)
                     true
                 }
                 else -> false

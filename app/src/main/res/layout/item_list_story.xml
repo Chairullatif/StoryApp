@@ -6,8 +6,7 @@
     android:orientation="vertical"
     android:layout_marginHorizontal="16dp"
     android:layout_marginTop="8dp"
-    android:background="@color/colorNeutral100"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    android:background="@color/colorNeutral100">
 
     <ImageView
         android:id="@+id/iv_story"
@@ -16,7 +15,8 @@
         android:layout_marginTop="8dp"
         android:layout_marginHorizontal="8dp"
         android:scaleType="centerCrop"
-        android:src="@drawable/ic_launcher_background" />
+        android:src="@drawable/ic_launcher_background"
+        android:contentDescription="@string/image_story" />
 
     <TextView
         android:id="@+id/tv_user_name"
@@ -27,7 +27,7 @@
         tools:text="UserName"
         android:fontFamily="@font/montserrat_semibold"
         android:textColor="@color/colorNeutral400"
-        android:textSize="16dp" />
+        android:textSize="16sp" />
 
     <TextView
         android:id="@+id/tv_desc"
@@ -41,6 +41,6 @@
         android:ellipsize="end"
         android:fontFamily="@font/montserrat"
         android:textColor="@color/colorNeutral400"
-        android:textSize="16dp" />
+        android:textSize="16sp" />
 
 </LinearLayout>
