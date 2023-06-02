@@ -5,18 +5,65 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Patterns
+import android.view.View
+import android.widget.Toast
+import androidx.activity.viewModels
 import com.chairullatif.storyapp.R
 import com.chairullatif.storyapp.databinding.ActivityRegisterBinding
+import com.chairullatif.storyapp.ui.login.UserViewModel
 
 class RegisterActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityRegisterBinding
+    private val userViewModel: UserViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityRegisterBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        // observe
+        viewModelObserve()
+
+        // init view
+        initView()
+    }
+
+    private fun viewModelObserve() {
+        binding.apply {
+            // loading
+            userViewModel.isLoading.observe(this@RegisterActivity) {
+                if (it) {
+                    btnRegister.visibility = View.GONE
+                    progressBar.visibility = View.VISIBLE
+                } else {
+                    btnRegister.visibility = View.VISIBLE
+                    progressBar.visibility = View.GONE
+                }
+            }
+
+            // register response
+            userViewModel.commonResponse.observe(this@RegisterActivity) {
+                Toast.makeText(this@RegisterActivity, it.message, Toast.LENGTH_SHORT).show()
+                if (!it.error) {
+                    finish()
+                }
+            }
+
+        }
+    }
+
+    private fun register() {
+        binding.apply {
+            userViewModel.register(
+                edtUserName.text.toString(),
+                edtEmail.text.toString(),
+                edtPassword.text.toString()
+            )
+        }
+    }
+
+    private fun initView() {
         binding.apply {
 
             //email
@@ -58,6 +105,8 @@ class RegisterActivity : AppCompatActivity() {
                     edtUserName.error = getString(R.string.username_is_required)
                 } else {
                     edtUserName.error = null
+                    //register
+                    register()
                 }
             }
 
