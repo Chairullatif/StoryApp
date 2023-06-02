@@ -9,7 +9,6 @@ import android.util.Patterns
 import android.view.View
 import android.widget.Toast
 import androidx.activity.viewModels
-import com.chairullatif.storyapp.R
 import com.chairullatif.storyapp.databinding.ActivityLoginBinding
 import com.chairullatif.storyapp.ui.ViewModelFactory
 import com.chairullatif.storyapp.ui.liststory.ListStoryActivity

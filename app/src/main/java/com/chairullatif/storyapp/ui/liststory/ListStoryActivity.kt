@@ -3,14 +3,13 @@ package com.chairullatif.storyapp.ui.liststory
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.view.Menu
-import android.view.MenuItem
+import android.util.Log
 import androidx.activity.viewModels
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.chairullatif.storyapp.R
 import com.chairullatif.storyapp.databinding.ActivityListStoryBinding
 import com.chairullatif.storyapp.ui.ViewModelFactory
 import com.chairullatif.storyapp.ui.liststory.addstory.AddStoryActivity
-import com.chairullatif.storyapp.ui.liststory.detailstory.DetailStoryActivity
 import com.chairullatif.storyapp.ui.login.LoginActivity
 import com.chairullatif.storyapp.ui.login.UserViewModel
 
@@ -18,6 +17,12 @@ class ListStoryActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityListStoryBinding
     private val userViewModel: UserViewModel by viewModels { ViewModelFactory(this) }
+    private val storyViewModel: StoryViewModel by viewModels { ViewModelFactory(this) }
+    private lateinit var adapter: StoriesAdapter
+
+    companion object {
+        private const val TAG = "ListStoryActivity"
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -26,6 +31,23 @@ class ListStoryActivity : AppCompatActivity() {
 
         // init view
         initView()
+
+        // view model
+        viewModelAction()
+
+    }
+
+    private fun viewModelAction() {
+        binding.apply {
+            // get stories
+            storyViewModel.getStories()
+
+            // listen stories
+            storyViewModel.dataStories.observe(this@ListStoryActivity) {
+                Log.d(TAG, "viewModelAction stories: $it")
+                adapter.setListStory(it)
+            }
+        }
     }
 
     private fun initView() {
@@ -40,6 +62,12 @@ class ListStoryActivity : AppCompatActivity() {
                 val intent = Intent(this@ListStoryActivity, AddStoryActivity::class.java)
                 startActivity(intent)
             }
+
+            // rv stories
+            adapter = StoriesAdapter()
+            rvListStory.layoutManager = LinearLayoutManager(this@ListStoryActivity)
+            rvListStory.setHasFixedSize(true)
+            rvListStory.adapter = adapter
         }
     }
 
