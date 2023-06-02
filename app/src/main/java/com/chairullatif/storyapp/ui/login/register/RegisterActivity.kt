@@ -10,12 +10,13 @@ import android.widget.Toast
 import androidx.activity.viewModels
 import com.chairullatif.storyapp.R
 import com.chairullatif.storyapp.databinding.ActivityRegisterBinding
+import com.chairullatif.storyapp.ui.ViewModelFactory
 import com.chairullatif.storyapp.ui.login.UserViewModel
 
 class RegisterActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityRegisterBinding
-    private val userViewModel: UserViewModel by viewModels()
+    private val userViewModel: UserViewModel by viewModels { ViewModelFactory(this) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
