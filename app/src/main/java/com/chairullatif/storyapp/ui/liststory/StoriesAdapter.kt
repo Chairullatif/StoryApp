@@ -1,11 +1,13 @@
 package com.chairullatif.storyapp.ui.liststory
 
+import android.content.Intent
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.chairullatif.storyapp.data.model.StoryModel
 import com.chairullatif.storyapp.databinding.ItemListStoryBinding
 import com.chairullatif.storyapp.helper.GlideHelper.loadImage
+import com.chairullatif.storyapp.ui.liststory.detailstory.DetailStoryActivity
 
 class StoriesAdapter: RecyclerView.Adapter<StoriesAdapter.ViewHolder>() {
 
@@ -23,6 +25,12 @@ class StoriesAdapter: RecyclerView.Adapter<StoriesAdapter.ViewHolder>() {
                 tvUserName.text = storyModel.name
                 tvDesc.text = storyModel.description
                 ivStory.loadImage(storyModel.photoUrl)
+            }
+
+            itemView.setOnClickListener {
+                val intent = Intent(itemView.context, DetailStoryActivity::class.java)
+                intent.putExtra(DetailStoryActivity.EXTRA_ID_STORY, storyModel.id)
+                itemView.context.startActivity(intent)
             }
         }
     }

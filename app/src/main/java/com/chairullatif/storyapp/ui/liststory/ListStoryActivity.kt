@@ -88,4 +88,9 @@ class ListStoryActivity : AppCompatActivity() {
         }
         popupMenu.show()
     }
+
+    override fun onResume() {
+        super.onResume()
+        storyViewModel.getStories()
+    }
 }
