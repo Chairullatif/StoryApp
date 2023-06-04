@@ -37,7 +37,8 @@
         android:layout_height="200dp"
         android:layout_margin="24dp"
         android:contentDescription="@string/image_preview"
-        android:src="@drawable/round_insert_photo_24"
+        tools:src="@drawable/round_insert_photo_24"
+        android:transitionName="iv_story"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tv_title" />
@@ -52,6 +53,7 @@
         android:fontFamily="@font/montserrat_semibold"
         android:textColor="@color/colorNeutral400"
         android:textSize="16sp"
+        android:transitionName="tv_user_name"
         app:layout_constraintTop_toBottomOf="@id/iv_story"/>
 
     <ScrollView

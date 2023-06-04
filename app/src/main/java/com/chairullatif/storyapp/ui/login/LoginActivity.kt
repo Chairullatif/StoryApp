@@ -1,5 +1,7 @@
 package com.chairullatif.storyapp.ui.login
 
+import android.animation.AnimatorSet
+import android.animation.ObjectAnimator
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -30,6 +32,28 @@ class LoginActivity : AppCompatActivity() {
         // init view
         initView()
 
+    }
+
+    private fun playAnimation() {
+        val tvEmailAnim =
+            ObjectAnimator.ofFloat(binding.tvEmail, View.TRANSLATION_X, -200f, 0f).setDuration(1000)
+        val tvPasswordAnim =
+            ObjectAnimator.ofFloat(binding.tvPassword, View.TRANSLATION_X, -200f, 0f).setDuration(1000)
+        val edtEmailAnim =
+            ObjectAnimator.ofFloat(binding.edtEmail, View.TRANSLATION_X, 200f, 0f).setDuration(1000)
+        val edtPasswordAnim =
+            ObjectAnimator.ofFloat(binding.edtPassword, View.TRANSLATION_X, 200f, 0f).setDuration(1000)
+        val btnLoginAnim =
+            ObjectAnimator.ofFloat(binding.btnLogin, View.ALPHA,  1f).setDuration(500)
+
+        val together = AnimatorSet().apply {
+            playTogether(tvEmailAnim, tvPasswordAnim, edtEmailAnim, edtPasswordAnim)
+        }
+
+        AnimatorSet().apply {
+            playSequentially(together, btnLoginAnim)
+            start()
+        }
     }
 
     private fun viewModelObserve() {
@@ -127,4 +151,9 @@ class LoginActivity : AppCompatActivity() {
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+        // set animation
+        playAnimation()
+    }
 }

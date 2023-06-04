@@ -1,8 +1,11 @@
 package com.chairullatif.storyapp.ui.liststory
 
+import android.app.Activity
 import android.content.Intent
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.core.app.ActivityOptionsCompat
+import androidx.core.util.Pair
 import androidx.recyclerview.widget.RecyclerView
 import com.chairullatif.storyapp.data.model.StoryModel
 import com.chairullatif.storyapp.databinding.ItemListStoryBinding
@@ -30,7 +33,10 @@ class StoriesAdapter: RecyclerView.Adapter<StoriesAdapter.ViewHolder>() {
             itemView.setOnClickListener {
                 val intent = Intent(itemView.context, DetailStoryActivity::class.java)
                 intent.putExtra(DetailStoryActivity.EXTRA_ID_STORY, storyModel.id)
-                itemView.context.startActivity(intent)
+                itemView.context.startActivity(intent,
+                    ActivityOptionsCompat.makeSceneTransitionAnimation(itemView.context as Activity)
+                        .toBundle()
+                )
             }
         }
     }

@@ -1,5 +1,7 @@
 package com.chairullatif.storyapp.ui.login.register
 
+import android.animation.AnimatorSet
+import android.animation.ObjectAnimator
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.Editable
@@ -122,5 +124,36 @@ class RegisterActivity : AppCompatActivity() {
                         && (edtUserName.text?.length ?: 0) >= 0
                         ))
         }
+    }
+
+    private fun playAnimation() {
+        val tvEmailAnim =
+            ObjectAnimator.ofFloat(binding.tvEmail, View.TRANSLATION_X, -200f, 0f).setDuration(1000)
+        val tvPasswordAnim =
+            ObjectAnimator.ofFloat(binding.tvPassword, View.TRANSLATION_X, -200f, 0f).setDuration(1000)
+        val tvUserNameAnim =
+            ObjectAnimator.ofFloat(binding.tvName, View.TRANSLATION_X, -200f, 0f).setDuration(1000)
+        val edtEmailAnim =
+            ObjectAnimator.ofFloat(binding.edtEmail, View.TRANSLATION_X, 200f, 0f).setDuration(1000)
+        val edtPasswordAnim =
+            ObjectAnimator.ofFloat(binding.edtPassword, View.TRANSLATION_X, 200f, 0f).setDuration(1000)
+        val edtNameAnim =
+            ObjectAnimator.ofFloat(binding.edtUserName, View.TRANSLATION_X, 200f, 0f).setDuration(1000)
+        val btnRegisterAnim =
+            ObjectAnimator.ofFloat(binding.btnRegister, View.ALPHA,  1f).setDuration(500)
+
+        val together = AnimatorSet().apply {
+            playTogether(tvEmailAnim, tvPasswordAnim, edtEmailAnim, edtPasswordAnim, tvUserNameAnim, edtNameAnim)
+        }
+
+        AnimatorSet().apply {
+            playSequentially(together, btnRegisterAnim)
+            start()
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        playAnimation()
     }
 }
