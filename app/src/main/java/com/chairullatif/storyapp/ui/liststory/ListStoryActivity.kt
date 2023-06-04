@@ -3,6 +3,7 @@ package com.chairullatif.storyapp.ui.liststory
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.provider.Settings
 import android.util.Log
 import androidx.activity.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -81,6 +82,10 @@ class ListStoryActivity : AppCompatActivity() {
                     val intent = Intent(this, LoginActivity::class.java)
                     intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
                     startActivity(intent)
+                    true
+                }
+                R.id.menu_change_language -> {
+                    startActivity(Intent(Settings.ACTION_LOCALE_SETTINGS))
                     true
                 }
                 else -> false

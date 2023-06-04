@@ -25,9 +25,10 @@
     <string name="image_ilustration">Image ilustration</string>
     <string name="image_story">Image story</string>
     <string name="detail_story">Detail Story</string>
-    <string name="tidak_mendapatkan_permission">Tidak mendapatkan permission.</string>
+    <string name="tidak_mendapatkan_permission">Doesn\'t get permission.</string>
     <string name="choose_a_picture">Choose a Picture</string>
     <string name="fill_the_story">Fill the story</string>
     <string name="uploading">Uploading...</string>
     <string name="something_went_wrong">Something went wrong</string>
+    <string name="language">Language</string>
 </resources>
