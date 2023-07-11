@@ -21,10 +21,6 @@ class ListStoryActivity : AppCompatActivity() {
     private val storyViewModel: StoryViewModel by viewModels { ViewModelFactory(this) }
     private lateinit var adapter: StoriesAdapter
 
-    companion object {
-        private const val TAG = "ListStoryActivity"
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityListStoryBinding.inflate(layoutInflater)
@@ -46,7 +42,7 @@ class ListStoryActivity : AppCompatActivity() {
             // listen stories
             storyViewModel.dataStories.observe(this@ListStoryActivity) {
                 Log.d(TAG, "viewModelAction stories: $it")
-                adapter.setListStory(it)
+                adapter.submitList(it)
             }
         }
     }
@@ -98,4 +94,9 @@ class ListStoryActivity : AppCompatActivity() {
         super.onResume()
         storyViewModel.getStories()
     }
+
+    companion object {
+        private const val TAG = "ListStoryActivity"
+    }
+
 }

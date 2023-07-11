@@ -33,11 +33,6 @@ class AddStoryActivity : AppCompatActivity() {
     private val storyViewModel: StoryViewModel by viewModels { ViewModelFactory(this) }
     private lateinit var currentPhotoPath: String
 
-    companion object {
-        private val REQUIRED_PERMISSIONS = arrayOf(Manifest.permission.CAMERA)
-        private const val REQUEST_CODE_PERMISSIONS = 10
-    }
-
     // launcher intent camera
     private val launcherIntentCamera = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
@@ -196,4 +191,10 @@ class AddStoryActivity : AppCompatActivity() {
         val chooser = Intent.createChooser(intent, getString(R.string.choose_a_picture))
         launcherIntentGallery.launch(chooser)
     }
+
+    companion object {
+        private val REQUIRED_PERMISSIONS = arrayOf(Manifest.permission.CAMERA)
+        private const val REQUEST_CODE_PERMISSIONS = 10
+    }
+
 }

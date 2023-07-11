@@ -23,17 +23,4 @@ class SharedPrefManager(private val context: Context) {
 
     fun getString(keySp: String): String? = sharedPref.getString(keySp, "")
 
-    fun saveInt(keySp: String, value: Int) {
-        spEditor.putInt(keySp, value)
-        spEditor.commit()
-    }
-
-    fun getInt(keySp: String): Int = sharedPref.getInt(keySp, 0)
-
-    fun saveBoolean(keySp: String, value: Boolean) {
-        spEditor.putBoolean(keySp, value)
-        spEditor.commit()
-    }
-
-    fun getBoolean(keySp: String): Boolean = sharedPref.getBoolean(keySp, false)
 }
