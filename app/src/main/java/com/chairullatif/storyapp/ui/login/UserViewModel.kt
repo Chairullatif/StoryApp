@@ -8,8 +8,8 @@ import androidx.lifecycle.ViewModel
 import com.chairullatif.storyapp.data.SharedPrefManager
 import com.chairullatif.storyapp.data.model.UserModel
 import com.chairullatif.storyapp.data.remote.ApiConfig
-import com.chairullatif.storyapp.data.response.CommonResponse
-import com.chairullatif.storyapp.data.response.LoginResponse
+import com.chairullatif.storyapp.data.remote.response.CommonResponse
+import com.chairullatif.storyapp.data.remote.response.LoginResponse
 import com.google.gson.Gson
 import retrofit2.Call
 import retrofit2.Callback

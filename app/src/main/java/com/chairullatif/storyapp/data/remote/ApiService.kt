@@ -1,9 +1,9 @@
 package com.chairullatif.storyapp.data.remote
 
-import com.chairullatif.storyapp.data.response.AllStoriesResponse
-import com.chairullatif.storyapp.data.response.CommonResponse
-import com.chairullatif.storyapp.data.response.LoginResponse
-import com.chairullatif.storyapp.data.response.StoryResponse
+import com.chairullatif.storyapp.data.remote.response.AllStoriesResponse
+import com.chairullatif.storyapp.data.remote.response.CommonResponse
+import com.chairullatif.storyapp.data.remote.response.LoginResponse
+import com.chairullatif.storyapp.data.remote.response.StoryResponse
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import retrofit2.Call
@@ -39,7 +39,15 @@ interface ApiService {
         @Header("Authorization") authorization: String,
         @Query("page") page: Int?,
         @Query("size") size: Int?,
-        @Query("location") location: Boolean
+        @Query("location") location: Int = 0,
+    ): Call<AllStoriesResponse>
+
+    @GET("stories")
+    fun getStoriesWithLocation(
+        @Header("Authorization") authorization: String,
+        @Query("page") page: Int?,
+        @Query("size") size: Int?,
+        @Query("location") location : Int = 1,
     ): Call<AllStoriesResponse>
 
     @GET("stories/{id_story}")
@@ -53,6 +61,8 @@ interface ApiService {
     fun addStory(
         @Header("Authorization") authorization: String,
         @Part("description") description: RequestBody,
+        @Part("lat") latitude: RequestBody,
+        @Part("lon") longitude: RequestBody,
         @Part photo: MultipartBody.Part,
     ): Call<CommonResponse>
 }

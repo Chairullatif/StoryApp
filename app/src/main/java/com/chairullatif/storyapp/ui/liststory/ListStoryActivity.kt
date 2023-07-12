@@ -11,6 +11,7 @@ import com.chairullatif.storyapp.R
 import com.chairullatif.storyapp.databinding.ActivityListStoryBinding
 import com.chairullatif.storyapp.ui.ViewModelFactory
 import com.chairullatif.storyapp.ui.liststory.addstory.AddStoryActivity
+import com.chairullatif.storyapp.ui.liststory.storymap.StoryMapsActivity
 import com.chairullatif.storyapp.ui.login.LoginActivity
 import com.chairullatif.storyapp.ui.login.UserViewModel
 
@@ -56,8 +57,12 @@ class ListStoryActivity : AppCompatActivity() {
 
             //btn add story
             fabAddStory.setOnClickListener {
-                val intent = Intent(this@ListStoryActivity, AddStoryActivity::class.java)
-                startActivity(intent)
+                launchActivity(AddStoryActivity::class.java)
+            }
+
+            //btn map
+            btnMap.setOnClickListener {
+                launchActivity(StoryMapsActivity::class.java)
             }
 
             // rv stories
@@ -66,6 +71,11 @@ class ListStoryActivity : AppCompatActivity() {
             rvListStory.setHasFixedSize(true)
             rvListStory.adapter = adapter
         }
+    }
+
+    private fun launchActivity(activityClass: Class<*>) {
+        val intent = Intent(this@ListStoryActivity, activityClass)
+        startActivity(intent)
     }
 
     private fun showPopUpMenu() {

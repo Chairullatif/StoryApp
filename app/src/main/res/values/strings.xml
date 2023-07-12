@@ -31,4 +31,9 @@
     <string name="uploading">Uploading...</string>
     <string name="something_went_wrong">Something went wrong</string>
     <string name="language">Language</string>
+    <string name="title_activity_story_maps">StoryMapsActivity</string>
+    <string name="image_map">Image map</string>
+    <string name="add_location">Add location</string>
+    <string name="getting_location">Getting location...</string>
+    <string name="failed_get_location">Failed to get location</string>
 </resources>

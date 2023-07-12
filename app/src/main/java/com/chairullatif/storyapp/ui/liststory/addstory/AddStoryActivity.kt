@@ -5,6 +5,8 @@ import android.content.Intent
 import android.content.Intent.ACTION_GET_CONTENT
 import android.content.pm.PackageManager
 import android.graphics.BitmapFactory
+import android.location.Address
+import android.location.Geocoder
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -24,7 +26,11 @@ import com.chairullatif.storyapp.helper.rotateFile
 import com.chairullatif.storyapp.helper.uriToFile
 import com.chairullatif.storyapp.ui.ViewModelFactory
 import com.chairullatif.storyapp.ui.liststory.StoryViewModel
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationRequest
+import com.google.android.gms.location.LocationServices
 import java.io.File
+import java.util.Locale
 
 class AddStoryActivity : AppCompatActivity() {
 
@@ -32,6 +38,10 @@ class AddStoryActivity : AppCompatActivity() {
     private lateinit var binding: ActivityAddStoryBinding
     private val storyViewModel: StoryViewModel by viewModels { ViewModelFactory(this) }
     private lateinit var currentPhotoPath: String
+    private lateinit var fusedLocationClient: FusedLocationProviderClient
+
+    var latitude: Double? = null
+    var longitude: Double? = null
 
     // launcher intent camera
     private val launcherIntentCamera = registerForActivityResult(
@@ -64,10 +74,36 @@ class AddStoryActivity : AppCompatActivity() {
         }
     }
 
+    // launcher get location
+    private val requestPermissionLauncher =
+        registerForActivityResult(
+            ActivityResultContracts.RequestMultiplePermissions()
+        ) { permissions ->
+            when {
+                permissions[Manifest.permission.ACCESS_FINE_LOCATION] ?: false -> {
+                    // Precise location access granted.
+                    getMyCurrentLocation()
+                }
+                permissions[Manifest.permission.ACCESS_COARSE_LOCATION] ?: false -> {
+                    // Only approximate location access granted.
+                    getMyCurrentLocation()
+                }
+                else -> {
+                    binding.switchLocation.isChecked = false
+                    binding.btnUpload.isEnabled = true
+                    binding.tvLocation.text = getString(R.string.add_location)
+                    showToast(getString(R.string.tidak_mendapatkan_permission))
+                }
+            }
+        }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityAddStoryBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        // init fused location
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
 
         // init view
         initView()
@@ -111,17 +147,17 @@ class AddStoryActivity : AppCompatActivity() {
 
     private fun initView() {
         binding.apply {
-            if (!allPermissionsGranted()) {
+            if (!checkCameraPermission()) {
                 ActivityCompat.requestPermissions(
                     this@AddStoryActivity,
-                    REQUIRED_PERMISSIONS,
-                    REQUEST_CODE_PERMISSIONS
+                    REQUIRED_CAMERA_PERMISSIONS,
+                    REQUEST_CODE_CAMERA_PERMISSIONS
                 )
             }
 
             //btn back
             btnBack.setOnClickListener {
-                onBackPressed()
+                onBackPressedDispatcher.onBackPressed()
             }
 
             // btn take photo camera
@@ -134,14 +170,68 @@ class AddStoryActivity : AppCompatActivity() {
                 startGallery()
             }
 
+            switchLocation.setOnClickListener {
+                if (switchLocation.isChecked) {
+                    getMyCurrentLocation()
+                } else {
+                    tvLocation.text = getString(R.string.add_location)
+                    binding.btnUpload.isEnabled = true
+                }
+            }
+
             // btn upload
             btnUpload.setOnClickListener {
                 if (getFile != null && edtStory.text.toString().isNotEmpty()) {
                     reduceFileImage(getFile!!)
-                    storyViewModel.addStory(edtStory.text.toString(), getFile!!)
+                    storyViewModel.addStory(edtStory.text.toString(), latitude, longitude, getFile!!)
                 } else {
                     showToast(getString(R.string.choose_a_picture) + " & " + getString(R.string.fill_the_story))
                 }
+            }
+        }
+    }
+
+    private fun getMyCurrentLocation() {
+        binding.tvLocation.text = getString(R.string.getting_location)
+        binding.btnUpload.isEnabled = false
+        if (ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            requestPermissionLauncher.launch(REQUIRED_LOCATION_PERMISSIONS)
+        } else {
+            fusedLocationClient.getCurrentLocation(
+                LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY, null
+            ).addOnSuccessListener { location ->
+                if (location != null) {
+                    // get location name
+                    val geocoder = Geocoder(this, Locale.getDefault())
+                    val addresses: List<Address>? = geocoder.getFromLocation(
+                        location.latitude,
+                        location.longitude,
+                        1
+                    )
+
+                    //set latitude and longitude and tv location
+                    val country: String = addresses?.get(0)?.countryName
+                            ?: location.latitude.toString()
+                    val subAdminArea: String = addresses?.get(0)?.subAdminArea
+                            ?: location.longitude.toString()
+                    binding.tvLocation.text = "$subAdminArea, $country"
+                    latitude = location.latitude
+                    longitude = location.longitude
+                } else {
+                    showToast(getString(R.string.failed_get_location))
+                    binding.tvLocation.text = getString(R.string.failed_get_location)
+                }
+                binding.btnUpload.isEnabled = true
+            }.addOnFailureListener {
+                showToast(getString(R.string.failed_get_location))
+                binding.btnUpload.isEnabled = true
             }
         }
     }
@@ -152,20 +242,18 @@ class AddStoryActivity : AppCompatActivity() {
         grantResults: IntArray
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if (requestCode == REQUEST_CODE_PERMISSIONS) {
-            if (!allPermissionsGranted()) {
-                Toast.makeText(
-                    this,
-                    getString(R.string.tidak_mendapatkan_permission),
-                    Toast.LENGTH_SHORT
-                ).show()
+        if (requestCode == REQUEST_CODE_CAMERA_PERMISSIONS) {
+            if (!checkCameraPermission()) {
+                showToast(getString(R.string.tidak_mendapatkan_permission))
                 finish()
             }
         }
     }
-    private fun allPermissionsGranted() = REQUIRED_PERMISSIONS.all {
+
+    private fun checkCameraPermission() = REQUIRED_CAMERA_PERMISSIONS.all {
         ContextCompat.checkSelfPermission(baseContext, it) == PackageManager.PERMISSION_GRANTED
     }
+
     private fun startTakePhoto() {
         val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
         intent.resolveActivity(packageManager)
@@ -193,8 +281,12 @@ class AddStoryActivity : AppCompatActivity() {
     }
 
     companion object {
-        private val REQUIRED_PERMISSIONS = arrayOf(Manifest.permission.CAMERA)
-        private const val REQUEST_CODE_PERMISSIONS = 10
+        private val REQUIRED_CAMERA_PERMISSIONS = arrayOf(Manifest.permission.CAMERA)
+        private val REQUIRED_LOCATION_PERMISSIONS = arrayOf(
+            Manifest.permission.ACCESS_FINE_LOCATION,
+            Manifest.permission.ACCESS_COARSE_LOCATION
+        )
+        private const val REQUEST_CODE_CAMERA_PERMISSIONS = 10
     }
 
 }

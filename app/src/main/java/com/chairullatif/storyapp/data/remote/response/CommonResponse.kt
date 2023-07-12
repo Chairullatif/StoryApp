@@ -1,4 +1,4 @@
-package com.chairullatif.storyapp.data.response
+package com.chairullatif.storyapp.data.remote.response
 
 data class CommonResponse(
     val error: Boolean,

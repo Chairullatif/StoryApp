@@ -5,14 +5,18 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import androidx.paging.PagingData
+import androidx.paging.cachedIn
 import com.chairullatif.storyapp.R
 import com.chairullatif.storyapp.data.SharedPrefManager
+import com.chairullatif.storyapp.data.StoryRepository
 import com.chairullatif.storyapp.data.model.StoryModel
 import com.chairullatif.storyapp.data.model.UserModel
 import com.chairullatif.storyapp.data.remote.ApiConfig
-import com.chairullatif.storyapp.data.response.AllStoriesResponse
-import com.chairullatif.storyapp.data.response.CommonResponse
-import com.chairullatif.storyapp.data.response.StoryResponse
+import com.chairullatif.storyapp.data.remote.response.AllStoriesResponse
+import com.chairullatif.storyapp.data.remote.response.CommonResponse
+import com.chairullatif.storyapp.data.remote.response.StoryResponse
 import com.google.gson.Gson
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
@@ -24,7 +28,10 @@ import retrofit2.Callback
 import retrofit2.Response
 import java.io.File
 
-class StoryViewModel(private val context: Context): ViewModel() {
+class StoryViewModel(
+    private val context: Context,
+    private val storyRepository: StoryRepository
+    ): ViewModel() {
 
     private val sharedPreManager = SharedPrefManager(context)
 
@@ -44,6 +51,17 @@ class StoryViewModel(private val context: Context): ViewModel() {
         private const val TAG = "StoryViewModel"
     }
 
+    fun storiesWithPaging(): LiveData<PagingData<StoryModel>> {
+        val gson = Gson()
+        val json = sharedPreManager.getString(SharedPrefManager.SP_OBJECT_USER)
+        val user = gson.fromJson(json, UserModel::class.java)
+        val token = user?.token
+        val authorization = "Bearer $token"
+
+        return storyRepository.getStories(authorization).cachedIn(viewModelScope)
+    }
+
+
     fun getStories() {
         val gson = Gson()
         val json = sharedPreManager.getString(SharedPrefManager.SP_OBJECT_USER)
@@ -51,7 +69,38 @@ class StoryViewModel(private val context: Context): ViewModel() {
         val token = user?.token
         val authorization = "Bearer $token"
 
-        val client = ApiConfig.getApiService().getStories(authorization, null, null, false)
+        val client = ApiConfig.getApiService().getStories(authorization, null, null, 0)
+        client.enqueue(object : Callback<AllStoriesResponse> {
+            override fun onResponse(
+                call: Call<AllStoriesResponse>,
+                response: Response<AllStoriesResponse>
+            ) {
+                if (response.isSuccessful) {
+                    val body = response.body()
+                    if (body != null) {
+                        _dataStories.value = body.listStory
+                    }
+                } else {
+                    val errorBody = response.errorBody().toString()
+                    Log.d(TAG, "onResponse error: $errorBody")
+                }
+            }
+
+            override fun onFailure(call: Call<AllStoriesResponse>, t: Throwable) {
+
+            }
+
+        })
+    }
+
+    fun getStoriesWithLocation() {
+        val gson = Gson()
+        val json = sharedPreManager.getString(SharedPrefManager.SP_OBJECT_USER)
+        val user = gson.fromJson(json, UserModel::class.java)
+        val token = user?.token
+        val authorization = "Bearer $token"
+
+        val client = ApiConfig.getApiService().getStoriesWithLocation(authorization, null, null, 1)
         client.enqueue(object : Callback<AllStoriesResponse> {
             override fun onResponse(
                 call: Call<AllStoriesResponse>,
@@ -106,6 +155,8 @@ class StoryViewModel(private val context: Context): ViewModel() {
 
     fun addStory(
         description: String,
+        latitude: Double? = 0.0,
+        longitude: Double? = 0.0,
         image: File,
     ) {
         val gson = Gson()
@@ -115,6 +166,8 @@ class StoryViewModel(private val context: Context): ViewModel() {
         val authorization = "Bearer $token"
 
         val bodyDesc = description.toRequestBody("text/plain".toMediaTypeOrNull())
+        val bodyLat = latitude.toString().toRequestBody("text/plain".toMediaTypeOrNull())
+        val bodyLon = longitude.toString().toRequestBody("text/plain".toMediaTypeOrNull())
         val requestImageFile = image.asRequestBody("image/jpeg".toMediaType())
         val bodyImage = MultipartBody.Part.createFormData("photo", image.name, requestImageFile)
 
@@ -126,6 +179,8 @@ class StoryViewModel(private val context: Context): ViewModel() {
             .addStory(
                 authorization,
                 bodyDesc,
+                bodyLat,
+                bodyLon,
                 bodyImage,
             )
         client.enqueue(object : Callback<CommonResponse> {

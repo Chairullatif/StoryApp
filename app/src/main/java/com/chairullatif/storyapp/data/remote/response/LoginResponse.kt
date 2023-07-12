@@ -1,4 +1,4 @@
-package com.chairullatif.storyapp.data.response
+package com.chairullatif.storyapp.data.remote.response
 
 import com.chairullatif.storyapp.data.model.UserModel
 
