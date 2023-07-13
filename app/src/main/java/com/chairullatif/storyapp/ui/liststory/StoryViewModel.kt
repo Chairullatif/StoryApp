@@ -13,7 +13,6 @@ import com.chairullatif.storyapp.data.SharedPrefManager
 import com.chairullatif.storyapp.data.StoryRepository
 import com.chairullatif.storyapp.data.model.StoryModel
 import com.chairullatif.storyapp.data.model.UserModel
-import com.chairullatif.storyapp.data.remote.ApiConfig
 import com.chairullatif.storyapp.data.remote.response.AllStoriesResponse
 import com.chairullatif.storyapp.data.remote.response.CommonResponse
 import com.chairullatif.storyapp.data.remote.response.StoryResponse
@@ -38,6 +37,9 @@ class StoryViewModel(
     private val _dataStories = MutableLiveData<List<StoryModel>>()
     val dataStories: LiveData<List<StoryModel>> = _dataStories
 
+    private val _dataPagedStories = MutableLiveData<PagingData<StoryModel>>()
+    val dataPagedStories: LiveData<PagingData<StoryModel>> = _dataPagedStories
+
     private val _dataStory = MutableLiveData<StoryModel>()
     val dataStory: LiveData<StoryModel> = _dataStory
 
@@ -51,46 +53,16 @@ class StoryViewModel(
         private const val TAG = "StoryViewModel"
     }
 
-    fun storiesWithPaging(): LiveData<PagingData<StoryModel>> {
+    fun getStoriesWithPaging() {
         val gson = Gson()
         val json = sharedPreManager.getString(SharedPrefManager.SP_OBJECT_USER)
         val user = gson.fromJson(json, UserModel::class.java)
         val token = user?.token
         val authorization = "Bearer $token"
 
-        return storyRepository.getStories(authorization).cachedIn(viewModelScope)
-    }
-
-
-    fun getStories() {
-        val gson = Gson()
-        val json = sharedPreManager.getString(SharedPrefManager.SP_OBJECT_USER)
-        val user = gson.fromJson(json, UserModel::class.java)
-        val token = user?.token
-        val authorization = "Bearer $token"
-
-        val client = ApiConfig.getApiService().getStories(authorization, null, null, 0)
-        client.enqueue(object : Callback<AllStoriesResponse> {
-            override fun onResponse(
-                call: Call<AllStoriesResponse>,
-                response: Response<AllStoriesResponse>
-            ) {
-                if (response.isSuccessful) {
-                    val body = response.body()
-                    if (body != null) {
-                        _dataStories.value = body.listStory
-                    }
-                } else {
-                    val errorBody = response.errorBody().toString()
-                    Log.d(TAG, "onResponse error: $errorBody")
-                }
-            }
-
-            override fun onFailure(call: Call<AllStoriesResponse>, t: Throwable) {
-
-            }
-
-        })
+        storyRepository.getStories(authorization).cachedIn(viewModelScope).observeForever {
+            _dataPagedStories.value = it
+        }
     }
 
     fun getStoriesWithLocation() {
@@ -100,7 +72,7 @@ class StoryViewModel(
         val token = user?.token
         val authorization = "Bearer $token"
 
-        val client = ApiConfig.getApiService().getStoriesWithLocation(authorization, null, null, 1)
+        val client = storyRepository.getStoriesWithLocation(authorization)
         client.enqueue(object : Callback<AllStoriesResponse> {
             override fun onResponse(
                 call: Call<AllStoriesResponse>,
@@ -131,7 +103,7 @@ class StoryViewModel(
         val token = user?.token
         val authorization = "Bearer $token"
 
-        val client = ApiConfig.getApiService().getStoryById(authorization, idStory)
+        val client = storyRepository.getStoryById(authorization, idStory)
         client.enqueue(object : Callback<StoryResponse> {
 
             override fun onResponse(call: Call<StoryResponse>, response: Response<StoryResponse>) {
@@ -175,7 +147,7 @@ class StoryViewModel(
         Log.d(TAG, "addStory: image: $image")
 
         _isLoading.value = true
-        val client = ApiConfig.getApiService()
+        val client = storyRepository
             .addStory(
                 authorization,
                 bodyDesc,

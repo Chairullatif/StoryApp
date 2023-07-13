@@ -99,7 +99,7 @@ class RegisterActivity : AppCompatActivity() {
 
             //btn back
             btnBack.setOnClickListener {
-                onBackPressed()
+                onBackPressedDispatcher.onBackPressed()
             }
 
             //btn register

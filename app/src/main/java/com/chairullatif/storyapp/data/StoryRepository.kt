@@ -7,6 +7,12 @@ import androidx.paging.PagingData
 import androidx.paging.liveData
 import com.chairullatif.storyapp.data.model.StoryModel
 import com.chairullatif.storyapp.data.remote.ApiService
+import com.chairullatif.storyapp.data.remote.response.AllStoriesResponse
+import com.chairullatif.storyapp.data.remote.response.CommonResponse
+import com.chairullatif.storyapp.data.remote.response.StoryResponse
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
+import retrofit2.Call
 
 class StoryRepository(private val apiService: ApiService) {
 
@@ -21,4 +27,32 @@ class StoryRepository(private val apiService: ApiService) {
         ).liveData
     }
 
+    fun getStoriesWithLocation(
+        authorization: String
+    ): Call<AllStoriesResponse> {
+        return apiService.getStoriesWithLocation(authorization, null, null, 1)
+    }
+
+    fun getStoryById(
+        authorization: String,
+        idStory: String?
+    ): Call<StoryResponse> {
+        return apiService.getStoryById(authorization, idStory)
+    }
+
+    fun addStory(
+        authorization: String,
+        bodyDesc: RequestBody,
+        bodyLat: RequestBody,
+        bodyLon: RequestBody,
+        bodyImage: MultipartBody.Part
+    ): Call<CommonResponse> {
+        return apiService.addStory(
+            authorization,
+            bodyDesc,
+            bodyLat,
+            bodyLon,
+            bodyImage,
+        )
+    }
 }

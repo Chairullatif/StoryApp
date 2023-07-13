@@ -1,12 +1,13 @@
-package com.chairullatif.storyapp.ui.liststory
+package com.chairullatif.storyapp.adapter
 
 import android.app.Activity
 import android.content.Intent
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.app.ActivityOptionsCompat
+import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
-import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.chairullatif.storyapp.data.model.StoryModel
 import com.chairullatif.storyapp.databinding.ItemListStoryBinding
@@ -14,7 +15,7 @@ import com.chairullatif.storyapp.helper.GlideHelper.loadImage
 import com.chairullatif.storyapp.ui.liststory.detailstory.DetailStoryActivity
 
 class StoriesAdapter :
-    ListAdapter<StoryModel, StoriesAdapter.ViewHolder>(WordsComparator()) {
+    PagingDataAdapter<StoryModel, StoriesAdapter.ViewHolder>(WordsComparator()) {
 
     inner class ViewHolder(private val binding: ItemListStoryBinding): RecyclerView.ViewHolder(binding.root) {
         fun bind(storyModel: StoryModel) {
@@ -35,13 +36,17 @@ class StoriesAdapter :
         }
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): StoriesAdapter.ViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val binding = ItemListStoryBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return ViewHolder(binding)
     }
 
-    override fun onBindViewHolder(holder: StoriesAdapter.ViewHolder, position: Int) {
-        holder.bind(getItem(position))
+    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+        val data = getItem(position)
+        Log.d(TAG, "onBindViewHolder: $data")
+        if (data != null) {
+            holder.bind(data)
+        }
     }
 
     class WordsComparator : DiffUtil.ItemCallback<StoryModel>() {
@@ -52,5 +57,9 @@ class StoriesAdapter :
         override fun areContentsTheSame(oldItem: StoryModel, newItem: StoryModel): Boolean {
             return oldItem.id == newItem.id
         }
+    }
+
+    companion object {
+        private const val TAG = "StoriesAdapter"
     }
 }

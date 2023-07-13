@@ -4,6 +4,8 @@ import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import com.chairullatif.storyapp.data.model.StoryModel
 import com.chairullatif.storyapp.data.remote.ApiService
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 class StoriesPagingSource(
     private val apiService: ApiService,
@@ -21,18 +23,26 @@ class StoriesPagingSource(
         return try {
             val position = params.key ?: INITIAL_PAGE_INDEX
 
-            val response = apiService.getStories(
-                authorization,
-                position,
-                params.loadSize,
-                0
-            ).execute()
+            val response = withContext(Dispatchers.IO) {
+                apiService.getStories(
+                    authorization,
+                    position,
+                    params.loadSize,
+                    0
+                ).execute()
+            }
 
-            LoadResult.Page(
-                data = response.body()?.listStory ?: emptyList(),
-                prevKey = if (position == INITIAL_PAGE_INDEX) null else position - 1,
-                nextKey = if (response.body()?.listStory.isNullOrEmpty()) null else position + 1
-            )
+            if (response.isSuccessful) {
+                val stories = response.body()?.listStory ?: emptyList()
+                LoadResult.Page(
+                    data = stories,
+                    prevKey = if (position == 1) null else position - 1,
+                    nextKey = if (stories.isEmpty()) null else position + 1
+                )
+            } else {
+                LoadResult.Error(Exception("Error ${response.code()}"))
+            }
+
         } catch (e: Exception) {
             LoadResult.Error(e)
         }

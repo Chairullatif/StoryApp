@@ -19,6 +19,8 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import com.chairullatif.storyapp.R
+import com.chairullatif.storyapp.data.StoryRepository
+import com.chairullatif.storyapp.data.remote.ApiConfig
 import com.chairullatif.storyapp.databinding.ActivityAddStoryBinding
 import com.chairullatif.storyapp.helper.createCustomTempFile
 import com.chairullatif.storyapp.helper.reduceFileImage
@@ -36,7 +38,11 @@ class AddStoryActivity : AppCompatActivity() {
 
     private var getFile: File? = null
     private lateinit var binding: ActivityAddStoryBinding
-    private val storyViewModel: StoryViewModel by viewModels { ViewModelFactory(this) }
+    private val storyViewModel: StoryViewModel by viewModels {
+        ViewModelFactory(
+            this,
+            StoryRepository(ApiConfig.getApiService())
+        ) }
     private lateinit var currentPhotoPath: String
     private lateinit var fusedLocationClient: FusedLocationProviderClient
 

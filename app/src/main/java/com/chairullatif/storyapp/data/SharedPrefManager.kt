@@ -4,7 +4,7 @@ import android.content.Context
 import android.content.Context.MODE_PRIVATE
 import android.content.SharedPreferences
 
-class SharedPrefManager(private val context: Context) {
+class SharedPrefManager(context: Context) {
 
     private var sharedPref: SharedPreferences = context.getSharedPreferences(SP_APPS, MODE_PRIVATE)
     private var spEditor: SharedPreferences.Editor = sharedPref.edit()

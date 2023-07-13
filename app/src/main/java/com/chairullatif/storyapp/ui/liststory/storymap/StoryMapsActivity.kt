@@ -5,7 +5,9 @@ import android.os.Bundle
 import android.util.Log
 import androidx.activity.viewModels
 import com.chairullatif.storyapp.R
+import com.chairullatif.storyapp.data.StoryRepository
 import com.chairullatif.storyapp.data.model.StoryModel
+import com.chairullatif.storyapp.data.remote.ApiConfig
 
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
@@ -22,7 +24,11 @@ class StoryMapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
     private lateinit var mMap: GoogleMap
     private lateinit var binding: ActivityStoryMapsBinding
-    private val storyViewModel: StoryViewModel by viewModels { ViewModelFactory(this) }
+    private val storyViewModel: StoryViewModel by viewModels {
+        ViewModelFactory(
+            this,
+            StoryRepository(ApiConfig.getApiService())
+        ) }
     private val boundsBuilder = LatLngBounds.Builder()
 
     override fun onCreate(savedInstanceState: Bundle?) {

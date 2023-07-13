@@ -3,6 +3,8 @@ package com.chairullatif.storyapp.ui.liststory.detailstory
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.activity.viewModels
+import com.chairullatif.storyapp.data.StoryRepository
+import com.chairullatif.storyapp.data.remote.ApiConfig
 import com.chairullatif.storyapp.databinding.ActivityDetailStoryBinding
 import com.chairullatif.storyapp.helper.GlideHelper.loadImage
 import com.chairullatif.storyapp.ui.ViewModelFactory
@@ -12,7 +14,9 @@ class DetailStoryActivity : AppCompatActivity() {
 
     private var idStory: String? = null
     private lateinit var binding: ActivityDetailStoryBinding
-    private val storyViewModel: StoryViewModel by viewModels { ViewModelFactory(this) }
+    private val storyViewModel: StoryViewModel by viewModels {
+        ViewModelFactory(this, StoryRepository(ApiConfig.getApiService()))
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -45,7 +49,7 @@ class DetailStoryActivity : AppCompatActivity() {
         binding.apply {
             //btn back
             btnBack.setOnClickListener {
-                onBackPressed()
+                onBackPressedDispatcher.onBackPressed()
             }
         }
     }

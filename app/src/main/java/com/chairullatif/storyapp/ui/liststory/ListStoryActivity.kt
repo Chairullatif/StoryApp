@@ -8,6 +8,10 @@ import android.util.Log
 import androidx.activity.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.chairullatif.storyapp.R
+import com.chairullatif.storyapp.adapter.LoadingStateAdapter
+import com.chairullatif.storyapp.adapter.StoriesAdapter
+import com.chairullatif.storyapp.data.StoryRepository
+import com.chairullatif.storyapp.data.remote.ApiConfig
 import com.chairullatif.storyapp.databinding.ActivityListStoryBinding
 import com.chairullatif.storyapp.ui.ViewModelFactory
 import com.chairullatif.storyapp.ui.liststory.addstory.AddStoryActivity
@@ -19,7 +23,11 @@ class ListStoryActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityListStoryBinding
     private val userViewModel: UserViewModel by viewModels { ViewModelFactory(this) }
-    private val storyViewModel: StoryViewModel by viewModels { ViewModelFactory(this) }
+    private val storyViewModel: StoryViewModel by viewModels {
+        ViewModelFactory(
+            this,
+            StoryRepository(ApiConfig.getApiService())
+        ) }
     private lateinit var adapter: StoriesAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -37,13 +45,13 @@ class ListStoryActivity : AppCompatActivity() {
 
     private fun viewModelAction() {
         binding.apply {
-            // get stories
-            storyViewModel.getStories()
+            // get stories with paging
+            storyViewModel.getStoriesWithPaging()
 
-            // listen stories
-            storyViewModel.dataStories.observe(this@ListStoryActivity) {
+            // listen stories with paging
+            storyViewModel.dataPagedStories.observe(this@ListStoryActivity) {
                 Log.d(TAG, "viewModelAction stories: $it")
-                adapter.submitList(it)
+                adapter.submitData(lifecycle, it)
             }
         }
     }
@@ -69,7 +77,11 @@ class ListStoryActivity : AppCompatActivity() {
             adapter = StoriesAdapter()
             rvListStory.layoutManager = LinearLayoutManager(this@ListStoryActivity)
             rvListStory.setHasFixedSize(true)
-            rvListStory.adapter = adapter
+            rvListStory.adapter = adapter.withLoadStateFooter(
+                footer = LoadingStateAdapter {
+                    adapter.retry()
+                }
+            )
         }
     }
 
@@ -102,7 +114,8 @@ class ListStoryActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        storyViewModel.getStories()
+        // get stories with paging
+        storyViewModel.getStoriesWithPaging()
     }
 
     companion object {
