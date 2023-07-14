@@ -39,10 +39,8 @@ class AddStoryActivity : AppCompatActivity() {
     private var getFile: File? = null
     private lateinit var binding: ActivityAddStoryBinding
     private val storyViewModel: StoryViewModel by viewModels {
-        ViewModelFactory(
-            this,
-            StoryRepository(ApiConfig.getApiService())
-        ) }
+        ViewModelFactory(this)
+    }
     private lateinit var currentPhotoPath: String
     private lateinit var fusedLocationClient: FusedLocationProviderClient
 

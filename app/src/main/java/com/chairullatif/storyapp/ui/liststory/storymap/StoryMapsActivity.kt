@@ -25,10 +25,8 @@ class StoryMapsActivity : AppCompatActivity(), OnMapReadyCallback {
     private lateinit var mMap: GoogleMap
     private lateinit var binding: ActivityStoryMapsBinding
     private val storyViewModel: StoryViewModel by viewModels {
-        ViewModelFactory(
-            this,
-            StoryRepository(ApiConfig.getApiService())
-        ) }
+        ViewModelFactory(this)
+    }
     private val boundsBuilder = LatLngBounds.Builder()
 
     override fun onCreate(savedInstanceState: Bundle?) {

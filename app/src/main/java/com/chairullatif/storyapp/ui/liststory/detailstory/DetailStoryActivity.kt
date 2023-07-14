@@ -15,7 +15,7 @@ class DetailStoryActivity : AppCompatActivity() {
     private var idStory: String? = null
     private lateinit var binding: ActivityDetailStoryBinding
     private val storyViewModel: StoryViewModel by viewModels {
-        ViewModelFactory(this, StoryRepository(ApiConfig.getApiService()))
+        ViewModelFactory(this)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

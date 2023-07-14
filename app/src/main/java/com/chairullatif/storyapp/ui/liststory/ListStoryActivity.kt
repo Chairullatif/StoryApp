@@ -24,10 +24,8 @@ class ListStoryActivity : AppCompatActivity() {
     private lateinit var binding: ActivityListStoryBinding
     private val userViewModel: UserViewModel by viewModels { ViewModelFactory(this) }
     private val storyViewModel: StoryViewModel by viewModels {
-        ViewModelFactory(
-            this,
-            StoryRepository(ApiConfig.getApiService())
-        ) }
+        ViewModelFactory(this)
+    }
     private lateinit var adapter: StoriesAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
