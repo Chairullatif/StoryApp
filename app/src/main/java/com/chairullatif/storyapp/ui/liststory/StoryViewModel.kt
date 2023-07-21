@@ -1,6 +1,5 @@
 package com.chairullatif.storyapp.ui.liststory
 
-import android.content.Context
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -8,8 +7,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
-import com.chairullatif.storyapp.R
 import com.chairullatif.storyapp.data.SharedPrefManager
+import com.chairullatif.storyapp.data.SharedPrefRepository
+import com.chairullatif.storyapp.data.SharedPrefRepository.Companion.SP_OBJECT_USER
 import com.chairullatif.storyapp.data.StoryRepository
 import com.chairullatif.storyapp.data.model.StoryModel
 import com.chairullatif.storyapp.data.model.UserModel
@@ -28,17 +28,15 @@ import retrofit2.Response
 import java.io.File
 
 class StoryViewModel(
-    private val context: Context,
+    private val sharedPrefRepository: SharedPrefRepository,
     private val storyRepository: StoryRepository
     ): ViewModel() {
 
-    private val sharedPreManager = SharedPrefManager(context)
-
+    private var authorization: String = ""
     private val _dataStories = MutableLiveData<List<StoryModel>>()
     val dataStories: LiveData<List<StoryModel>> = _dataStories
 
     private val _dataPagedStories = MutableLiveData<PagingData<StoryModel>>()
-    val dataPagedStories: LiveData<PagingData<StoryModel>> = _dataPagedStories
 
     private val _dataStory = MutableLiveData<StoryModel>()
     val dataStory: LiveData<StoryModel> = _dataStory
@@ -53,21 +51,25 @@ class StoryViewModel(
         private const val TAG = "StoryViewModel"
     }
 
-    fun getStoriesWithPaging() {
+    init {
         val gson = Gson()
-        val json = sharedPreManager.getString(SharedPrefManager.SP_OBJECT_USER)
+        val json = sharedPrefRepository.getString(SP_OBJECT_USER)
         val user = gson.fromJson(json, UserModel::class.java)
         val token = user?.token
-        val authorization = "Bearer $token"
+        authorization = "Bearer $token"
+    }
 
-        storyRepository.getStories(authorization).cachedIn(viewModelScope).observeForever {
-            _dataPagedStories.value = it
-        }
+    val dataPagedStories: LiveData<PagingData<StoryModel>> by lazy {
+        getStoriesWithPaging()
+    }
+
+    fun getStoriesWithPaging(): LiveData<PagingData<StoryModel>> {
+        return storyRepository.getStories(authorization).cachedIn(viewModelScope)
     }
 
     fun getStoriesWithLocation() {
         val gson = Gson()
-        val json = sharedPreManager.getString(SharedPrefManager.SP_OBJECT_USER)
+        val json = sharedPrefRepository.getString(SharedPrefManager.SP_OBJECT_USER)
         val user = gson.fromJson(json, UserModel::class.java)
         val token = user?.token
         val authorization = "Bearer $token"
@@ -97,12 +99,6 @@ class StoryViewModel(
     }
 
     fun getStoryById(idStory: String?) {
-        val gson = Gson()
-        val json = sharedPreManager.getString(SharedPrefManager.SP_OBJECT_USER)
-        val user = gson.fromJson(json, UserModel::class.java)
-        val token = user?.token
-        val authorization = "Bearer $token"
-
         val client = storyRepository.getStoryById(authorization, idStory)
         client.enqueue(object : Callback<StoryResponse> {
 
@@ -131,11 +127,6 @@ class StoryViewModel(
         longitude: Double? = 0.0,
         image: File,
     ) {
-        val gson = Gson()
-        val json = sharedPreManager.getString(SharedPrefManager.SP_OBJECT_USER)
-        val user = gson.fromJson(json, UserModel::class.java)
-        val token = user?.token
-        val authorization = "Bearer $token"
 
         val bodyDesc = description.toRequestBody("text/plain".toMediaTypeOrNull())
         val bodyLat = latitude.toString().toRequestBody("text/plain".toMediaTypeOrNull())
@@ -165,7 +156,7 @@ class StoryViewModel(
                 } else {
                     val errorBody = response.errorBody().toString()
                     Log.d(TAG, "onResponse error: $errorBody")
-                    _commonResponse.value = CommonResponse(true, context.getString(R.string.something_went_wrong))
+                    _commonResponse.value = CommonResponse(true, "Something went wrong")
                 }
                 _isLoading.value = false
             }

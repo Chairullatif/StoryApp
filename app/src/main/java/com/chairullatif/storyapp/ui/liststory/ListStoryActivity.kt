@@ -113,7 +113,7 @@ class ListStoryActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
         // get stories with paging
-        storyViewModel.getStoriesWithPaging()
+        storyViewModel.dataPagedStories
     }
 
     companion object {

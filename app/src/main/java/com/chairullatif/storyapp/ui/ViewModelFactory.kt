@@ -13,11 +13,11 @@ class ViewModelFactory(private val context: Context) : ViewModelProvider.Factory
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         return if (modelClass.isAssignableFrom(UserViewModel::class.java)) {
             UserViewModel(
-                context
+                Injection.provideSharedPrefRepository(context),
             ) as T
         } else if (modelClass.isAssignableFrom(StoryViewModel::class.java)) {
             StoryViewModel(
-                context,
+                Injection.provideSharedPrefRepository(context),
                 Injection.provideStoryRepository(context)
             ) as T
         } else {

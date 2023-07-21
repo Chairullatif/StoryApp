@@ -15,7 +15,7 @@ import com.chairullatif.storyapp.helper.GlideHelper.loadImage
 import com.chairullatif.storyapp.ui.liststory.detailstory.DetailStoryActivity
 
 class StoriesAdapter :
-    PagingDataAdapter<StoryModel, StoriesAdapter.ViewHolder>(WordsComparator()) {
+    PagingDataAdapter<StoryModel, StoriesAdapter.ViewHolder>(DIFF_CALLBACK) {
 
     inner class ViewHolder(private val binding: ItemListStoryBinding): RecyclerView.ViewHolder(binding.root) {
         fun bind(storyModel: StoryModel) {
@@ -49,17 +49,17 @@ class StoriesAdapter :
         }
     }
 
-    class WordsComparator : DiffUtil.ItemCallback<StoryModel>() {
-        override fun areItemsTheSame(oldItem: StoryModel, newItem: StoryModel): Boolean {
-            return oldItem === newItem
-        }
-
-        override fun areContentsTheSame(oldItem: StoryModel, newItem: StoryModel): Boolean {
-            return oldItem.id == newItem.id
-        }
-    }
-
     companion object {
         private const val TAG = "StoriesAdapter"
+        val DIFF_CALLBACK = object : DiffUtil.ItemCallback<StoryModel>() {
+            override fun areItemsTheSame(oldItem: StoryModel, newItem: StoryModel): Boolean {
+                return oldItem === newItem
+            }
+
+            override fun areContentsTheSame(oldItem: StoryModel, newItem: StoryModel): Boolean {
+                return oldItem.id == newItem.id
+            }
+        }
     }
+
 }

@@ -1,11 +1,11 @@
 package com.chairullatif.storyapp.ui.login
 
-import android.content.Context
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.chairullatif.storyapp.data.SharedPrefManager
+import com.chairullatif.storyapp.data.SharedPrefRepository
+import com.chairullatif.storyapp.data.SharedPrefRepository.Companion.SP_OBJECT_USER
 import com.chairullatif.storyapp.data.model.UserModel
 import com.chairullatif.storyapp.data.remote.ApiConfig
 import com.chairullatif.storyapp.data.remote.response.CommonResponse
@@ -15,9 +15,9 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-class UserViewModel(context: Context) : ViewModel() {
-
-    private val sharedPrefManager: SharedPrefManager = SharedPrefManager(context)
+class UserViewModel(
+    private val sharedPrefRepository: SharedPrefRepository
+) : ViewModel() {
 
     private val _commonResponse = MutableLiveData<CommonResponse>()
     val commonResponse: LiveData<CommonResponse> = _commonResponse
@@ -79,7 +79,7 @@ class UserViewModel(context: Context) : ViewModel() {
                 if (response.isSuccessful) {
                     val gson = Gson()
                     val jsonUser = gson.toJson(response.body()?.loginResult ?: "")
-                    sharedPrefManager.saveString(SharedPrefManager.SP_OBJECT_USER, jsonUser)
+                    sharedPrefRepository.saveString(SP_OBJECT_USER, jsonUser)
                     Log.d(TAG, "onResponse: $jsonUser")
                     _loginResponse.value = response.body()
                 } else {
@@ -102,14 +102,14 @@ class UserViewModel(context: Context) : ViewModel() {
     fun getCurrentUser() {
         //get section
         val gson = Gson()
-        val jsonUser = sharedPrefManager.getString(SharedPrefManager.SP_OBJECT_USER)
+        val jsonUser = sharedPrefRepository.getString(SP_OBJECT_USER)
         val user = gson.fromJson(jsonUser, UserModel::class.java)
 
         _currentUser.value = user
     }
 
     fun logout() {
-        sharedPrefManager.saveString(SharedPrefManager.SP_OBJECT_USER, null)
+        sharedPrefRepository.saveString(SP_OBJECT_USER, null)
     }
 
 }
