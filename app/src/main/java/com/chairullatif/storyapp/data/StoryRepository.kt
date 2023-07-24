@@ -29,7 +29,6 @@ class StoryRepository(
             ),
             remoteMediator = StoryRemoteMediator(storyDatabase, apiService, authorization),
             pagingSourceFactory = {
-//                StoriesPagingSource(apiService, authorization)
                 storyDatabase.storyDao().getAllStory()
             }
         ).liveData

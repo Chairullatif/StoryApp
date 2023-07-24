@@ -10,8 +10,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.chairullatif.storyapp.R
 import com.chairullatif.storyapp.adapter.LoadingStateAdapter
 import com.chairullatif.storyapp.adapter.StoriesAdapter
-import com.chairullatif.storyapp.data.StoryRepository
-import com.chairullatif.storyapp.data.remote.ApiConfig
 import com.chairullatif.storyapp.databinding.ActivityListStoryBinding
 import com.chairullatif.storyapp.ui.ViewModelFactory
 import com.chairullatif.storyapp.ui.liststory.addstory.AddStoryActivity
@@ -42,15 +40,9 @@ class ListStoryActivity : AppCompatActivity() {
     }
 
     private fun viewModelAction() {
-        binding.apply {
-            // get stories with paging
-//            storyViewModel.getStoriesWithPaging()
-
-            // listen stories with paging
-            storyViewModel.dataPagedStories.observe(this@ListStoryActivity) {
-                Log.d(TAG, "viewModelAction stories: $it")
-                adapter.submitData(lifecycle, it)
-            }
+        storyViewModel.dataPagedStories.observe(this@ListStoryActivity) {
+            Log.d(TAG, "viewModelAction stories: $it")
+            adapter.submitData(lifecycle, it)
         }
     }
 
@@ -112,8 +104,7 @@ class ListStoryActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        // get stories with paging
-        storyViewModel.dataPagedStories
+        adapter.refresh()
     }
 
     companion object {

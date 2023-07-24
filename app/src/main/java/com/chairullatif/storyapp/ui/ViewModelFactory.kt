@@ -3,7 +3,6 @@ package com.chairullatif.storyapp.ui
 import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.chairullatif.storyapp.data.StoryRepository
 import com.chairullatif.storyapp.di.Injection
 import com.chairullatif.storyapp.ui.liststory.StoryViewModel
 import com.chairullatif.storyapp.ui.login.UserViewModel

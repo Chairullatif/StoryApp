@@ -36,8 +36,6 @@ class StoryViewModel(
     private val _dataStories = MutableLiveData<List<StoryModel>>()
     val dataStories: LiveData<List<StoryModel>> = _dataStories
 
-    private val _dataPagedStories = MutableLiveData<PagingData<StoryModel>>()
-
     private val _dataStory = MutableLiveData<StoryModel>()
     val dataStory: LiveData<StoryModel> = _dataStory
 
@@ -60,10 +58,6 @@ class StoryViewModel(
     }
 
     val dataPagedStories: LiveData<PagingData<StoryModel>> = storyRepository.getStories(authorization).cachedIn(viewModelScope)
-
-    fun getStoriesWithPaging(): LiveData<PagingData<StoryModel>> {
-        return storyRepository.getStories(authorization).cachedIn(viewModelScope)
-    }
 
     fun getStoriesWithLocation() {
         val gson = Gson()
@@ -126,6 +120,7 @@ class StoryViewModel(
         image: File,
     ) {
 
+
         val bodyDesc = description.toRequestBody("text/plain".toMediaTypeOrNull())
         val bodyLat = latitude.toString().toRequestBody("text/plain".toMediaTypeOrNull())
         val bodyLon = longitude.toString().toRequestBody("text/plain".toMediaTypeOrNull())
@@ -149,6 +144,7 @@ class StoryViewModel(
                 call: Call<CommonResponse>,
                 response: Response<CommonResponse>
             ) {
+                Log.d(TAG, "addStory: latitude: $latitude")
                 if (response.isSuccessful) {
                     _commonResponse.value = response.body()
                 } else {

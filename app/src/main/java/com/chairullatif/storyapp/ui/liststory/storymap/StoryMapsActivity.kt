@@ -5,9 +5,7 @@ import android.os.Bundle
 import android.util.Log
 import androidx.activity.viewModels
 import com.chairullatif.storyapp.R
-import com.chairullatif.storyapp.data.StoryRepository
 import com.chairullatif.storyapp.data.model.StoryModel
-import com.chairullatif.storyapp.data.remote.ApiConfig
 
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap

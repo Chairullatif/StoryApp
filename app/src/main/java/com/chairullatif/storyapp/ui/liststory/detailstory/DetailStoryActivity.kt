@@ -3,8 +3,6 @@ package com.chairullatif.storyapp.ui.liststory.detailstory
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.activity.viewModels
-import com.chairullatif.storyapp.data.StoryRepository
-import com.chairullatif.storyapp.data.remote.ApiConfig
 import com.chairullatif.storyapp.databinding.ActivityDetailStoryBinding
 import com.chairullatif.storyapp.helper.GlideHelper.loadImage
 import com.chairullatif.storyapp.ui.ViewModelFactory

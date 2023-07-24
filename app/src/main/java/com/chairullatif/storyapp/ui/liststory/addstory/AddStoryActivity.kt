@@ -19,8 +19,6 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import com.chairullatif.storyapp.R
-import com.chairullatif.storyapp.data.StoryRepository
-import com.chairullatif.storyapp.data.remote.ApiConfig
 import com.chairullatif.storyapp.databinding.ActivityAddStoryBinding
 import com.chairullatif.storyapp.helper.createCustomTempFile
 import com.chairullatif.storyapp.helper.reduceFileImage
@@ -44,8 +42,8 @@ class AddStoryActivity : AppCompatActivity() {
     private lateinit var currentPhotoPath: String
     private lateinit var fusedLocationClient: FusedLocationProviderClient
 
-    var latitude: Double? = null
-    var longitude: Double? = null
+    var latitude: Double = 0.0
+    var longitude: Double = 0.0
 
     // launcher intent camera
     private val launcherIntentCamera = registerForActivityResult(
@@ -225,7 +223,7 @@ class AddStoryActivity : AppCompatActivity() {
                             ?: location.latitude.toString()
                     val subAdminArea: String = addresses?.get(0)?.subAdminArea
                             ?: location.longitude.toString()
-                    binding.tvLocation.text = "$subAdminArea, $country"
+                    binding.tvLocation.text = getString(R.string.location, subAdminArea, country)
                     latitude = location.latitude
                     longitude = location.longitude
                 } else {

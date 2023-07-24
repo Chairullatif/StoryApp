@@ -31,4 +31,9 @@
     <string name="uploading">Mengunggah...</string>
     <string name="something_went_wrong">Terjadi kesalahan</string>
     <string name="language">Bahasa</string>
+    <string name="image_map">Gambar peta</string>
+    <string name="add_location">"Tambah lokasi "</string>
+    <string name="getting_location">Mendapatkan lokasi...</string>
+    <string name="failed_get_location">Gagal mendapatkan lokasi</string>
+    <string name="retry">Ulangi</string>
 </resources>
