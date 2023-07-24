@@ -2,7 +2,6 @@ package com.chairullatif.storyapp
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.TestDispatcher
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.resetMain
@@ -12,7 +11,7 @@ import org.junit.runner.Description
 
 @ExperimentalCoroutinesApi
 class MainDispatcherRule(
-    private val testDispatcher: TestDispatcher = StandardTestDispatcher()
+    private val testDispatcher: TestDispatcher = UnconfinedTestDispatcher()
 ) : TestWatcher() {
     override fun starting(description: Description) {
         Dispatchers.setMain(testDispatcher)

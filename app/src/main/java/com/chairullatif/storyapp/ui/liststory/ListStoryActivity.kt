@@ -44,7 +44,7 @@ class ListStoryActivity : AppCompatActivity() {
     private fun viewModelAction() {
         binding.apply {
             // get stories with paging
-            storyViewModel.getStoriesWithPaging()
+//            storyViewModel.getStoriesWithPaging()
 
             // listen stories with paging
             storyViewModel.dataPagedStories.observe(this@ListStoryActivity) {

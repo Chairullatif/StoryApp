@@ -59,9 +59,7 @@ class StoryViewModel(
         authorization = "Bearer $token"
     }
 
-    val dataPagedStories: LiveData<PagingData<StoryModel>> by lazy {
-        getStoriesWithPaging()
-    }
+    val dataPagedStories: LiveData<PagingData<StoryModel>> = storyRepository.getStories(authorization).cachedIn(viewModelScope)
 
     fun getStoriesWithPaging(): LiveData<PagingData<StoryModel>> {
         return storyRepository.getStories(authorization).cachedIn(viewModelScope)
