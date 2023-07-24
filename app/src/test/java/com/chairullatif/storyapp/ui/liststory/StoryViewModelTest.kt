@@ -71,8 +71,8 @@ class StoryViewModelTest {
             updateCallback = noopListUpdateCallback,
             workerDispatcher = Dispatchers.Main,
         )
+        
         differ.submitData(actualStory)
-
         Assert.assertNotNull(differ.snapshot())
         Assert.assertEquals(dummyStory.size, differ.snapshot().size)
         Assert.assertEquals(dummyStory[0], differ.snapshot()[0])
