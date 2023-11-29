@@ -1,21 +1,27 @@
 package com.chairullatif.storyapp.ui.liststory
 
 import android.content.Intent
+import android.graphics.BitmapFactory
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.provider.Settings
 import android.util.Log
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.chairullatif.storyapp.R
 import com.chairullatif.storyapp.adapter.LoadingStateAdapter
 import com.chairullatif.storyapp.adapter.StoriesAdapter
 import com.chairullatif.storyapp.databinding.ActivityListStoryBinding
+import com.chairullatif.storyapp.helper.rotateFile
 import com.chairullatif.storyapp.ui.ViewModelFactory
 import com.chairullatif.storyapp.ui.liststory.addstory.AddStoryActivity
 import com.chairullatif.storyapp.ui.liststory.storymap.StoryMapsActivity
 import com.chairullatif.storyapp.ui.login.LoginActivity
 import com.chairullatif.storyapp.ui.login.UserViewModel
+import kotlinx.coroutines.launch
+import java.io.File
 
 class ListStoryActivity : AppCompatActivity() {
 
@@ -25,6 +31,21 @@ class ListStoryActivity : AppCompatActivity() {
         ViewModelFactory(this)
     }
     private lateinit var adapter: StoriesAdapter
+
+    // launcher intent add story
+    private val launcherIntentAddStory = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) {
+        if (it.resultCode == RESULT_OK) {
+            adapter.refresh()
+            lifecycleScope.launch {
+                adapter.loadStateFlow
+                    .collect {
+                        binding.rvListStory.smoothScrollToPosition(0)
+                    }
+            }
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -55,7 +76,12 @@ class ListStoryActivity : AppCompatActivity() {
 
             //btn add story
             fabAddStory.setOnClickListener {
-                launchActivity(AddStoryActivity::class.java)
+                launcherIntentAddStory.launch(
+                    Intent(
+                        this@ListStoryActivity,
+                        AddStoryActivity::class.java
+                    )
+                )
             }
 
             //btn map
@@ -100,11 +126,6 @@ class ListStoryActivity : AppCompatActivity() {
             }
         }
         popupMenu.show()
-    }
-
-    override fun onResume() {
-        super.onResume()
-        adapter.refresh()
     }
 
     companion object {
