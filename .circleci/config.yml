@@ -14,6 +14,11 @@ jobs:
           name: Chmod permissions
           command: sudo chmod +x ./gradlew
       - run:
+          name: Set JDK Version
+          command: |
+            sudo update-alternatives --set java /usr/lib/jvm/zulu-17-amd64/bin/java
+            sudo update-alternatives --set javac /usr/lib/jvm/zulu-17-amd64/bin/javac
+      - run:
           name: Download Dependencies
           command: ./gradlew androidDependencies
       - save_cache:
