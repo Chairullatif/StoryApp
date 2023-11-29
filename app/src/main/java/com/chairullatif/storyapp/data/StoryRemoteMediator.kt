@@ -10,8 +10,6 @@ import com.chairullatif.storyapp.data.database.RemoteKeys
 import com.chairullatif.storyapp.data.database.StoryDatabase
 import com.chairullatif.storyapp.data.model.StoryModel
 import com.chairullatif.storyapp.data.remote.ApiService
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 
 @OptIn(ExperimentalPagingApi::class)
 class StoryRemoteMediator(
@@ -27,7 +25,7 @@ class StoryRemoteMediator(
     override suspend fun load(
         loadType: LoadType,
         state: PagingState<Int, StoryModel>
-    ): MediatorResult = withContext(Dispatchers.IO) {
+    ): MediatorResult{
 
         val page = when (loadType) {
             LoadType.REFRESH ->{
@@ -37,13 +35,13 @@ class StoryRemoteMediator(
             LoadType.PREPEND -> {
                 val remoteKeys = getRemoteKeyForFirstItem(state)
                 val prevKey = remoteKeys?.prevKey
-                    ?: return@withContext MediatorResult.Success(endOfPaginationReached = remoteKeys != null)
+                    ?: return MediatorResult.Success(endOfPaginationReached = remoteKeys != null)
                 prevKey
             }
             LoadType.APPEND -> {
                 val remoteKeys = getRemoteKeyForLastItem(state)
                 val nextKey = remoteKeys?.nextKey
-                    ?: return@withContext MediatorResult.Success(endOfPaginationReached = remoteKeys != null)
+                    ?: return MediatorResult.Success(endOfPaginationReached = remoteKeys != null)
                 nextKey
             }
         }
@@ -56,40 +54,34 @@ class StoryRemoteMediator(
                     page,
                     state.config.pageSize,
                     0
-                ).execute()
+                )
 
-            if (response.isSuccessful) {
-                val stories = response.body()?.listStory ?: emptyList()
-                Log.d(TAG, "stories loaded: $stories")
-                val endOfPaginationReached = stories.isEmpty()
+            val stories = response.listStory
+            Log.d(TAG, "stories loaded: $stories")
+            val endOfPaginationReached = stories.isEmpty()
 
-                //save to database
-                database.withTransaction {
-                    if (loadType == LoadType.REFRESH) {
-                        database.remoteKeysDao().deleteRemoteKeys()
-                        database.storyDao().deleteAll()
-                    }
-
-                    val prevKey = if (page == 1) null else page - 1
-                    val nextKey = if (endOfPaginationReached) null else page + 1
-                    val keys = stories.map {
-                        RemoteKeys(id = it.id, prevKey = prevKey, nextKey = nextKey)
-                    }
-
-                    database.remoteKeysDao().insertAll(keys)
-                    database.storyDao().insertStory(stories)
+            //save to database
+            database.withTransaction {
+                if (loadType == LoadType.REFRESH) {
+                    database.remoteKeysDao().deleteRemoteKeys()
+                    database.storyDao().deleteAll()
                 }
 
-                return@withContext MediatorResult.Success(endOfPaginationReached = endOfPaginationReached)
+                val prevKey = if (page == 1) null else page - 1
+                val nextKey = if (endOfPaginationReached) null else page + 1
+                val keys = stories.map {
+                    RemoteKeys(id = it.id, prevKey = prevKey, nextKey = nextKey)
+                }
 
-            } else {
-                return@withContext  MediatorResult.Error(Exception("Error ${response.code()}"))
+                database.remoteKeysDao().insertAll(keys)
+                database.storyDao().insertStory(stories)
             }
 
+            return MediatorResult.Success(endOfPaginationReached = endOfPaginationReached)
 
         } catch (exception: Exception) {
             Log.d(TAG, "load to error: ${exception.message}")
-            return@withContext  MediatorResult.Error(exception)
+            return MediatorResult.Error(exception)
         }
     }
 

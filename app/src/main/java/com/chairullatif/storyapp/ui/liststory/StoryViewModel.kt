@@ -57,7 +57,8 @@ class StoryViewModel(
         authorization = "Bearer $token"
     }
 
-    val dataPagedStories: LiveData<PagingData<StoryModel>> = storyRepository.getStories(authorization).cachedIn(viewModelScope)
+    val dataPagedStories: LiveData<PagingData<StoryModel>> =
+        storyRepository.getStories(authorization).cachedIn(viewModelScope)
 
     fun getStoriesWithLocation() {
         val gson = Gson()

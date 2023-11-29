@@ -137,6 +137,7 @@ class AddStoryActivity : AppCompatActivity() {
                     showToast(it.message)
                 } else {
                     showToast(it.message)
+                    setResult(RESULT_OK)
                     finish()
                 }
             }
@@ -290,5 +291,8 @@ class AddStoryActivity : AppCompatActivity() {
         )
         private const val REQUEST_CODE_CAMERA_PERMISSIONS = 10
     }
+}
 
+interface AddStoryCallback {
+    fun onAddStorySuccess()
 }
